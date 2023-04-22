@@ -1,1 +1,12 @@
 <%= render partial: './merchant_nav_bar' %>
+
+<body>
+  <div class="row">
+    <p class='col-12'>My Discounts</p>
+  </div>
+
+  <% @merchant.discounts.each do |discount| %>
+    <%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %>
+    <br>
+  <% end %>
+</body>
