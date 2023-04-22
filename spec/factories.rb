@@ -1,37 +1,69 @@
 FactoryBot.define do
   factory :customer do
-    first_name {Faker::Name.first_name}
-    last_name {Faker::Dessert.variety}
+    sequence(:id)
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
   end
 
   factory :invoice do
-    status {[0,1,2].sample}
-    merchant
-    customer
+    sequence(:id)
+    status { Faker::Number.between(from: 0, to: 2) }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
+
+    association :customer
   end
 
   factory :merchant do
-    name {Faker::Space.galaxy}
-    invoices
-    items
+    sequence(:id)
+    name { Faker::Company.name }
+    status { Faker::Number.between(from: 0, to: 1) }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
   end
 
   factory :item do
-    name {Faker::Coffee.variety}
-    description {Faker::Hipster.sentence}
-    unit_price {Faker::Number.decimal(l_digits: 2)}
-    merchant
+    sequence(:id)
+    name { Faker::Commerce.product_name }
+    description { Faker::Lorem.sentence }
+    unit_price { Faker::Number.between(from: 1, to: 1000) }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
+
+    association :merchant
   end
 
   factory :transaction do
-    result {[0,1].sample}
-    credit_card_number {Faker::Finance.credit_card}
-    invoice
+    sequence(:id)
+    credit_card_number { Faker::Business.credit_card_number }
+    result { Faker::Number.between(from: 0, to: 1) }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
+
+    association :invoice
   end
 
   factory :invoice_item do
-    status {[0,1,2].sample}
-    merchant
-    invoice
+    sequence(:id)
+    quantity { Faker::Number.between(from: 1, to: 5) }
+    unit_price { Faker::Number.between(from: 1, to: 1000) }
+    status { Faker::Number.between(from: 0, to: 2) }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
+
+    association :invoice, :item
+  end
+
+  factory :discount do
+    sequence(:id)
+    percent_decimal { Faker::Number.between(from: 0.0, to: 1.0) }
+    min_quantity { Faker::Number.between(from: 0, to: 100) }
+
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
+
+    association :merchant
   end
 end
