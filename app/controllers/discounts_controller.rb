@@ -1,6 +1,6 @@
 class DiscountsController < ApplicationController
-  before_action :find_merchant, only: [:index, :new, :create, :destroy]
-  before_action :find_discount, only: [:destroy]
+  before_action :find_merchant, only: [:index, :show, :new, :create, :destroy]
+  before_action :find_discount, only: [:show, :destroy]
 
   def index
   end
