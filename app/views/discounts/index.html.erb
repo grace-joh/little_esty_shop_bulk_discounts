@@ -1,11 +1,11 @@
 <%= render partial: './merchant_nav_bar' %>
 
-<body>
-  <div class="row">
-    <p class='col-12'>My Discounts</p>
-  </div>
+<div class="row">
+  <p class='col-12'>My Discounts</p>
+</div>
 
-  <% @merchant.discounts.each do |discount| %>
-    <p><%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %> - <%= discount.description %></p>
-  <% end %>
-</body>
+<% @merchant.discounts.each do |discount| %>
+  <p><%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %> - <%= discount.description %></p>
+<% end %>
+
+<%= link_to "Create a new discount", new_merchant_discount_path(@merchant) %>

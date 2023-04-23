@@ -1,6 +1,6 @@
 class Discount < ApplicationRecord
-  validates_presence_of :percent_decimal,
-                        :min_quantity
+  validates :percent_decimal, presence: true, numericality: { greater_than: 0, less_than_or_equal_to: 1 }
+  validates :min_quantity, presence: true, numericality: true
 
   belongs_to :merchant
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'the Merchant Discounts show page' do
+RSpec.describe 'the Merchant Discounts index page' do
   describe 'User Story 1' do
     before(:each) do
       delete_data
@@ -34,6 +34,19 @@ RSpec.describe 'the Merchant Discounts show page' do
 
         expect(current_path).to eq(merchant_discount_path(@merchant1, discount))
       end
+    end
+  end
+
+  describe 'User Story 2' do
+    it 'shows a link to create a new discount' do
+      merchant1 = create(:merchant)
+      visit merchant_discounts_path(merchant1)
+
+      expect(page).to have_link('Create a new discount')
+
+      click_link('Create a new discount')
+
+      expect(current_path).to eq(new_merchant_discount_path(merchant1))
     end
   end
 end
