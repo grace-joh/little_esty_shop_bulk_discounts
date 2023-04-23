@@ -58,7 +58,7 @@ FactoryBot.define do
 
   factory :discount do
     sequence(:id)
-    percent_decimal { Faker::Number.between(from: 0.0, to: 1.0) }
+    percent_decimal { Faker::Number.between(from: 0.0, to: 1.0).round(2) }
     min_quantity { Faker::Number.between(from: 0, to: 100) }
 
     created_at { Time.zone.now }
