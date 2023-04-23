@@ -5,7 +5,14 @@
 </div>
 
 <% @merchant.discounts.each do |discount| %>
-  <p><%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %> - <%= discount.description %></p>
+  <div id="discount-<%= discount.id %>">
+    <p>
+      <%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %> - <%= discount.description %>
+      <%= button_to 'Delete', merchant_discount_path(@merchant, discount), method: :delete %>
+    </p>
+  </div>
 <% end %>
+<br>
+<br>
 
 <%= link_to "Create a new discount", new_merchant_discount_path(@merchant) %>
