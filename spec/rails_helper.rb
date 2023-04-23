@@ -66,6 +66,15 @@ RSpec.configure do |config|
 
   # Factorybot
   config.include FactoryBot::Syntax::Methods
+
+  def delete_data
+    Customer.destroy_all
+    Merchant.destroy_all
+    Item.destroy_all
+    Invoice.destroy_all
+    Transaction.destroy_all
+    InvoiceItem.destroy_all
+  end
 end
 
 Shoulda::Matchers.configure do |config|
@@ -74,3 +83,4 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+

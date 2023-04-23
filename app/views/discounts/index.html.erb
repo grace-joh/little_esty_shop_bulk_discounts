@@ -6,7 +6,6 @@
   </div>
 
   <% @merchant.discounts.each do |discount| %>
-    <%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %>
-    <br>
+    <p><%= link_to "Discount ##{discount.id}", merchant_discount_path(@merchant, discount) %> - <%= discount.description %></p>
   <% end %>
 </body>
