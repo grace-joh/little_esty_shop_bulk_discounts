@@ -5,5 +5,5 @@
 </div>
 
 <div id="new-discount-form">
-  <%= render partial: 'form', locals: { model: @discount, url: merchant_discounts_path(@merchant), method: :post } %>
+  <%= render partial: 'form', locals: { model: @discount, url: merchant_discounts_path(@merchant), button_text: 'Create', method: :post } %>
 </div>

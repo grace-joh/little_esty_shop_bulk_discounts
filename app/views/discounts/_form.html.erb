@@ -1,7 +1,8 @@
   <%= form_with model: model, url: url, method: method, local: true do |f| %>
     <%= f.label :percent_integer, "Percent Discount" %>
-    <p><%= f.number_field :percent_integer, in: 1..100 %>%</p>
+    <%= f.number_field :percent_integer, in: 1..100, value: model.decimal_to_percent %>%
+    <br>
     <%= f.label :min_quantity, "Minimum Quantity" %>
-    <p><%= f.number_field :min_quantity %></p>
-    <%= f.submit 'Create' %>
+    <%= f.number_field :min_quantity %>
+    <%= f.submit button_text %>
   <% end %>
