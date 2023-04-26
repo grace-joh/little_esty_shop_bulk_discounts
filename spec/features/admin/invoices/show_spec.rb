@@ -59,6 +59,31 @@ describe 'Admin Invoices Index Page' do
     expect(page).to_not have_content(@i2.total_revenue)
   end
 
+  describe 'total discounted revenue' do
+    it 'shows the total discounted revenue for this invoice' do
+      create(:discount, percent_decimal: 0.10, min_quantity: 5, merchant: @m1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 80, merchant: @m1)
+
+      visit merchant_invoice_path(@m1, @i1)
+
+      expect(page).to have_content("Total Discounted Revenue: #{@i1.total_revenue_with_discounts.round(2)}")
+    end
+
+    it 'displays if there are no applicable discounts' do
+      create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @m1)
+
+      visit merchant_invoice_path(@m1, @i1)
+
+      expect(page).to have_content('This invoice has no applicable discounts.')
+    end
+
+    it 'displays if there are no discounts' do
+      visit merchant_invoice_path(@m1, @i1)
+
+      expect(page).to have_content('This invoice has no applicable discounts.')
+    end
+  end
+
   it 'should have status as a select field that updates the invoices status' do
     within("#status-update-#{@i1.id}") do
       select('cancelled', :from => 'invoice[status]')
