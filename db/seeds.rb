@@ -4,5 +4,6 @@ Item.destroy_all
 Invoice.destroy_all
 Transaction.destroy_all
 InvoiceItem.destroy_all
+Discount.destroy_all
 
-system('rake import')
+system('rake import:all')
