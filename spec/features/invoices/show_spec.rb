@@ -44,6 +44,7 @@ RSpec.describe 'invoices show' do
     @ii_9 = InvoiceItem.create!(invoice_id: @invoice_7.id, item_id: @item_4.id, quantity: 1, unit_price: 1, status: 1)
     @ii_10 = InvoiceItem.create!(invoice_id: @invoice_8.id, item_id: @item_5.id, quantity: 1, unit_price: 1, status: 1)
     @ii_11 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_8.id, quantity: 12, unit_price: 6, status: 1)
+    @ii_12 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_6.id, quantity: 12, unit_price: 6, status: 1)
 
     @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
     @transaction2 = Transaction.create!(credit_card_number: 230948, result: 1, invoice_id: @invoice_2.id)
@@ -123,5 +124,35 @@ RSpec.describe 'invoices show' do
      within("#current-invoice-status") do
        expect(page).to_not have_content("in progress")
      end
+  end
+
+  describe 'applied discounts column' do
+    it 'displays a link to the best applied discount show page' do
+      discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 10, merchant: @merchant1)
+      discount2 = create(:discount, percent_decimal: 0.10, min_quantity: 5, merchant: @merchant1)
+
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
+      within("#the-status-#{@ii_1.id}") do
+        expect(page).to have_link("Discount ##{discount2.id}")
+      end
+
+      within("#the-status-#{@ii_11.id}") do
+        expect(page).to have_link("Discount ##{discount1.id}")
+
+        click_link("Discount ##{discount1.id}")
+      end
+      expect(current_path).to eq(merchant_discount_path(@merchant1, discount1))
+    end
+
+    it 'displays N/A if no discount is applied' do
+      discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
+
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
+      within("#the-status-#{@ii_12.id}") do
+        expect(page).to have_content('N/A')
+      end
+    end
   end
 end
