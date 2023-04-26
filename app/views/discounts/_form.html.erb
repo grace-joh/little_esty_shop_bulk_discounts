@@ -1,6 +1,10 @@
   <%= form_with model: model, url: url, method: method, local: true do |f| %>
     <%= f.label :percent_integer, "Percent Discount" %>
-    <%= f.number_field :percent_integer, in: 1..100, value: model.decimal_to_percent %>%
+    <% if model.nil? %>
+      <%= f.number_field :percent_integer, in: 1..100 %>%
+    <% else %>
+      <%= f.number_field :percent_integer, in: 1..100, value: model.decimal_to_percent %>%
+    <% end %>
     <br>
     <%= f.label :min_quantity, "Minimum Quantity" %>
     <%= f.number_field :min_quantity %>
