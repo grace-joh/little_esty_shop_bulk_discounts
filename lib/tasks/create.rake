@@ -1,6 +1,6 @@
 namespace :create do
   task :discounts_csv => :environment do
-    rows = FactoryBot.create_list(:discount, 100)
+    rows = FactoryBot.create_list(:discount, 50)
 
     CSV.open('db/data/discounts.csv', 'w') do |csv|
       csv << ['id', 'percent_decimal', 'min_quantity', 'merchant_id', 'created_at', 'updated_at']
@@ -11,5 +11,7 @@ namespace :create do
         csv << array.to_csv.split(',')
       end
     end
+
+    ActiveRecord::Base.connection.reset_pk_sequence!('merchants')
   end
 end
