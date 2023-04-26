@@ -42,19 +42,19 @@ describe 'Admin Invoices Index Page' do
     expect(page).to have_content(@ii_1.quantity)
     expect(page).to have_content(@ii_2.quantity)
 
-    expect(page).to have_content("$#{@ii_1.unit_price}")
-    expect(page).to have_content("$#{@ii_2.unit_price}")
+    expect(page).to have_content(number_to_currency((@ii_1.unit_price / 100), precision: 2))
+    expect(page).to have_content(number_to_currency((@ii_2.unit_price / 100), precision: 2))
 
     expect(page).to have_content(@ii_1.status)
     expect(page).to have_content(@ii_2.status)
 
     expect(page).to_not have_content(@ii_3.quantity)
-    expect(page).to_not have_content("$#{@ii_3.unit_price}")
+    expect(page).to_not have_content(number_to_currency((@ii_3.unit_price / 100), precision: 2))
     expect(page).to_not have_content(@ii_3.status)
   end
 
   it 'should display the total revenue the invoice will generate' do
-    expect(page).to have_content("Total Revenue: $#{@i1.total_revenue}")
+    expect(page).to have_content("Total Revenue: #{number_to_currency(@i1.total_revenue, precision: 2)}")
 
     expect(page).to_not have_content(@i2.total_revenue)
   end
@@ -66,7 +66,7 @@ describe 'Admin Invoices Index Page' do
 
       visit merchant_invoice_path(@m1, @i1)
 
-      expect(page).to have_content("Total Discounted Revenue: #{@i1.total_revenue_with_discounts.round(2)}")
+      expect(page).to have_content("Total Discounted Revenue: #{number_to_currency(@i1.total_revenue_with_discounts)}")
     end
 
     it 'displays if there are no applicable discounts' do
