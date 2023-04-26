@@ -3,6 +3,8 @@ class DiscountsController < ApplicationController
   before_action :find_discount, only: [:show, :edit, :update, :destroy]
 
   def index
+    @holidays = HolidayFacade.new.upcoming_holidays(3)
+    # require 'pry'; binding.pry
   end
 
   def show
