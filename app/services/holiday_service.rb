@@ -1,4 +1,4 @@
-require 'HTTParty'
+# require 'HTTParty'
 require 'JSON'
 
 class HolidayService
