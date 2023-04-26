@@ -1,7 +1,9 @@
 require 'rails_helper'
 
-describe 'Admin Invoices Index Page' do
+describe 'Admin Invoices Show Page' do
   before :each do
+    delete_data
+    
     @m1 = Merchant.create!(name: 'Merchant 1')
 
     @c1 = Customer.create!(first_name: 'Yo', last_name: 'Yoz', address: '123 Heyyo', city: 'Whoville', state: 'CO', zip: 12345)
