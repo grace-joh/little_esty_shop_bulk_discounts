@@ -11,8 +11,13 @@
   <br>
 
   <p> Created on: <%= @invoice.created_at.strftime("%A, %B %-d, %Y") %></p>
-  <p>Total Revenue: <%= @invoice.total_revenue %></p>
+  <p>Total Revenue: <%= @invoice.total_revenue_for(@merchant.id) %></p>
 
+  <% unless @invoice.total_discount_from(@merchant.id) == 0 %>
+    <p>Total Discounted Revenue: <%= @invoice.total_discounted_revenue(@merchant.id) %></p>
+  <% else %>
+    <p>This invoice has no applicable discounts.</p>
+  <% end %>
 
   <h4>Customer:</h4>
     <%= @customer.first_name %> <%= @customer.last_name %><br>

@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'invoices show' do
   before :each do
+    delete_data
+
     @merchant1 = Merchant.create!(name: 'Hair Care')
     @merchant2 = Merchant.create!(name: 'Jewelry')
 
@@ -76,13 +78,36 @@ RSpec.describe 'invoices show' do
     expect(page).to have_content(@ii_1.quantity)
     expect(page).to have_content(@ii_1.unit_price)
     expect(page).to_not have_content(@ii_4.unit_price)
-
   end
 
-  it "shows the total revenue for this invoice" do
+  it 'shows the total revenue for this invoice' do
     visit merchant_invoice_path(@merchant1, @invoice_1)
 
-    expect(page).to have_content(@invoice_1.total_revenue)
+    expect(page).to have_content(@invoice_1.total_revenue_for(@merchant1.id))
+  end
+
+  describe 'total discounted revenue' do
+    it 'shows the total discounted revenue for this invoice' do
+      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
+
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
+      expect(page).to have_content(@invoice_1.total_discounted_revenue(@merchant1.id))
+    end
+
+    it 'displays if there are no applicable discounts' do
+      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant1)
+
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
+      expect(page).to have_content('This invoice has no applicable discounts.')
+    end
+
+    it 'displays if there are no discounts' do
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
+      expect(page).to have_content('This invoice has no applicable discounts.')
+    end
   end
 
   it "shows a select field to update the invoice status" do
@@ -99,5 +124,4 @@ RSpec.describe 'invoices show' do
        expect(page).to_not have_content("in progress")
      end
   end
-
 end
