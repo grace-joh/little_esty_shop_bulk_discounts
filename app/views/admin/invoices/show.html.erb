@@ -22,7 +22,12 @@
     </section>
       <% end %>
   <p>Created on: <%= @invoice.created_at.strftime("%A, %B %d, %Y") %>
-  <p>Total Revenue: $<%= @invoice.total_revenue %>
+  <p>Total Revenue: <%= number_to_currency(@invoice.total_revenue) %>
+  <% unless @invoice.total_discounts == 0 %>
+    <p>Total Discounted Revenue: <%= number_to_currency(@invoice.total_revenue_with_discounts) %></p>
+  <% else %>
+    <p>This invoice has no applicable discounts.</p>
+  <% end %>
 
   <h4>Customer:</h4>
     <%= @invoice.customer.first_name %> <%= @invoice.customer.last_name %><br>
@@ -46,7 +51,7 @@
         <tr class="tr">
           <td style="text-align:center"><%= i.item.name %></td>
           <td style="text-align:center"><%= i.quantity %></td>
-          <td style="text-align:center">$<%= i.unit_price %></td>
+          <td style="text-align:center"><%= number_to_currency((i.unit_price / 100)) %></td>
           <td style="text-align:center"><%= i.status%></td><br/>
         </tr>
       <% end %>

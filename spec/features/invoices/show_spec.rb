@@ -77,27 +77,27 @@ RSpec.describe 'invoices show' do
 
     expect(page).to have_content(@item_1.name)
     expect(page).to have_content(@ii_1.quantity)
-    expect(page).to have_content(@ii_1.unit_price)
-    expect(page).to_not have_content(@ii_4.unit_price)
+    expect(page).to have_content(number_to_currency(@ii_1.unit_price/100))
+    expect(page).to_not have_content(number_to_currency(@ii_4.unit_price/100))
   end
 
   it 'shows the total revenue for this invoice' do
     visit merchant_invoice_path(@merchant1, @invoice_1)
 
-    expect(page).to have_content(@invoice_1.total_revenue_for(@merchant1.id))
+    expect(page).to have_content(number_to_currency(@invoice_1.total_revenue_for(@merchant1.id)))
   end
 
   describe 'total discounted revenue' do
     it 'shows the total discounted revenue for this invoice' do
-      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
 
       visit merchant_invoice_path(@merchant1, @invoice_1)
 
-      expect(page).to have_content(@invoice_1.total_discounted_revenue(@merchant1.id))
+      expect(page).to have_content("Total Discounted Revenue: #{number_to_currency(@invoice_1.total_discounted_revenue(@merchant1.id))}")
     end
 
     it 'displays if there are no applicable discounts' do
-      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant1)
 
       visit merchant_invoice_path(@merchant1, @invoice_1)
 
@@ -146,7 +146,7 @@ RSpec.describe 'invoices show' do
     end
 
     it 'displays N/A if no discount is applied' do
-      discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
 
       visit merchant_invoice_path(@merchant1, @invoice_1)
 

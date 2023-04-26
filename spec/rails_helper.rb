@@ -67,6 +67,9 @@ RSpec.configure do |config|
   # Factorybot
   config.include FactoryBot::Syntax::Methods
 
+  # to include number_to_currency in feature tests
+  config.include ActionView::Helpers::NumberHelper
+
   def delete_data
     Customer.destroy_all
     Merchant.destroy_all

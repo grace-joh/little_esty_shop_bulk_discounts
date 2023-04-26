@@ -23,7 +23,7 @@ RSpec.describe Invoice, type: :model do
       InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_1.id, quantity: 9, unit_price: 10, status: 2)
       InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_8.id, quantity: 1, unit_price: 10, status: 1)
 
-      expect(invoice_1.total_revenue).to eq(100)
+      expect(invoice_1.total_revenue).to eq(1.00)
     end
 
     before(:each) do
@@ -39,6 +39,57 @@ RSpec.describe Invoice, type: :model do
 
       @customer1 = create(:customer)
       @invoice1 = create(:invoice, customer: @customer1)
+    end
+
+    describe '#total_discounts and #total_revenue' do
+      it 'counts no discounts if discounts do not exist' do
+        @ii1 = create(:invoice_item, invoice: @invoice1, item: @item1, quantity: 9, unit_price: 10) # 0.90
+        @ii2 = create(:invoice_item, invoice: @invoice1, item: @item2, quantity: 10, unit_price: 20) # 2.00
+        @ii3 = create(:invoice_item, invoice: @invoice1, item: @item3, quantity: 30, unit_price: 40) # 12.00
+        @ii4 = create(:invoice_item, invoice: @invoice1, item: @item5, quantity: 10, unit_price: 50) # 5.00
+
+        expect(@invoice1.total_discounts).to eq(0)
+        expect(@invoice1.total_revenue_with_discounts).to eq(19.90)
+      end
+
+      it 'counts no discounts if invoice items do not meet the discount minimum quantity' do
+        @discount1 = create(:discount, percent_decimal: 0.10, min_quantity: 100, merchant: @merchant1)
+        @discount2 = create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant2)
+
+        @ii1 = create(:invoice_item, invoice: @invoice1, item: @item1, quantity: 9, unit_price: 10) # 0.90
+        @ii2 = create(:invoice_item, invoice: @invoice1, item: @item2, quantity: 10, unit_price: 20) # 2.00
+        @ii3 = create(:invoice_item, invoice: @invoice1, item: @item3, quantity: 30, unit_price: 40) # 12.00
+        @ii4 = create(:invoice_item, invoice: @invoice1, item: @item5, quantity: 10, unit_price: 50) # 5.00
+
+        expect(@invoice1.total_discounts).to eq(0)
+        expect(@invoice1.total_revenue_with_discounts).to eq(19.90)
+      end
+
+      it 'only counts discounts where the minimum quantity is met and do not affect other merchants' do
+        @discount1 = create(:discount, percent_decimal: 0.10, min_quantity: 10, merchant: @merchant1)
+        @discount2 = create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant2)
+
+        @ii1 = create(:invoice_item, invoice: @invoice1, item: @item1, quantity: 9, unit_price: 10) # 0.90
+        @ii2 = create(:invoice_item, invoice: @invoice1, item: @item2, quantity: 10, unit_price: 20) # 2.00 - 0.20 = 1.80
+        @ii4 = create(:invoice_item, invoice: @invoice1, item: @item5, quantity: 10, unit_price: 50) # 5.00
+
+        expect(@invoice1.total_discounts).to eq(0.20)
+        expect(@invoice1.total_revenue_with_discounts).to eq(7.70)
+      end
+
+      it 'counts the greater discount if item meets min quantity for multiple discounts and do not affect other merchants' do
+        @discount1 = create(:discount, percent_decimal: 0.10, min_quantity: 10, merchant: @merchant1)
+        @discount2 = create(:discount, percent_decimal: 0.50, min_quantity: 30, merchant: @merchant1) # *
+        @discount3 = create(:discount, percent_decimal: 0.10, min_quantity: 10, merchant: @merchant2)
+        @discount3 = create(:discount, percent_decimal: 0.40, min_quantity: 5, merchant: @merchant2) # *
+
+        @ii1 = create(:invoice_item, invoice: @invoice1, item: @item1, quantity: 9, unit_price: 10) # 0.90
+        @ii2 = create(:invoice_item, invoice: @invoice1, item: @item2, quantity: 30, unit_price: 20) # 6.00 - 3.00 = 3.00
+        @ii4 = create(:invoice_item, invoice: @invoice1, item: @item5, quantity: 10, unit_price: 50) # 5.00 - 2.00 = 3.00
+
+        expect(@invoice1.total_discounts).to eq(5.00)
+        expect(@invoice1.total_revenue_with_discounts).to eq(6.90)
+      end
     end
 
     describe '#total_revenue_for' do

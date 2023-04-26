@@ -11,7 +11,23 @@ class Invoice < ApplicationRecord
   enum status: [:cancelled, 'in progress', :completed]
 
   def total_revenue
-    invoice_items.sum("unit_price * quantity")
+    invoice_items.sum("unit_price / 100 * quantity")
+  end
+
+  def total_discounts
+    invoice_items.joins(item: { merchant: :discounts })
+                 .where("invoice_items.quantity >= discounts.min_quantity")
+                 .group('invoice_items.id')
+                 .select("invoice_items.*,
+                        MAX(invoice_items.quantity * (invoice_items.unit_price / 100) *
+                          CASE WHEN invoice_items.quantity >= discounts.min_quantity THEN discounts.percent_decimal
+                               ELSE 0
+                          end) AS discount")
+                 .sum(&:discount)
+  end
+
+  def total_revenue_with_discounts
+    total_revenue - total_discounts
   end
 
   def total_revenue_for(merchant_id)
