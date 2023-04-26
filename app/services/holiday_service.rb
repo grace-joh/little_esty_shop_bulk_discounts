@@ -1,6 +1,3 @@
-# require 'HTTParty'
-require 'JSON'
-
 class HolidayService
   def holidays
     get_url("https://date.nager.at/api/v3/PublicHolidays/#{Date.today.year}/US")
