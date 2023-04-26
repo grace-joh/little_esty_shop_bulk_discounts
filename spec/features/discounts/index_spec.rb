@@ -12,6 +12,8 @@ RSpec.describe 'the Merchant Discounts index page' do
     @discount3 = create(:discount, merchant: @merchant1)
     @discount4 = create(:discount, merchant: @merchant2)
 
+    @holidays = HolidayFacade.new.upcoming_holidays(3)
+
     visit merchant_discounts_path(@merchant1)
   end
 
@@ -57,6 +59,19 @@ RSpec.describe 'the Merchant Discounts index page' do
 
       expect(current_path).to eq(merchant_discounts_path(@merchant1))
       expect(page).to_not have_content("Discount ##{@discount1.id}")
+    end
+  end
+
+  describe 'User Story 9' do
+    describe 'Holiday list' do
+      it 'displays a list of the next three holidays' do
+        within('#holidays') do
+          expect(page).to have_content('Upcoming Holidays')
+          @holidays.each do |holiday|
+            expect(page).to have_content(holiday.name)
+          end
+        end
+      end
     end
   end
 end

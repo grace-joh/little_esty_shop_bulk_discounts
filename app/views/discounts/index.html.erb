@@ -16,3 +16,15 @@
 <br>
 
 <%= link_to "Create a new discount", new_merchant_discount_path(@merchant) %>
+
+<div id="holidays">
+  <div class="row">
+    <p class='col-12'>Upcoming Holidays</p>
+  </div>
+
+  <ul>
+    <% @holidays.each do |holiday| %>
+        <li><%= holiday.name %></li>
+    <% end %>
+  <ul>
+</div>
