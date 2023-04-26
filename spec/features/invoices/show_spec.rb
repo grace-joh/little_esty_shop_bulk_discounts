@@ -89,15 +89,15 @@ RSpec.describe 'invoices show' do
 
   describe 'total discounted revenue' do
     it 'shows the total discounted revenue for this invoice' do
-      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 5, merchant: @merchant1)
 
       visit merchant_invoice_path(@merchant1, @invoice_1)
 
-      expect(page).to have_content(@invoice_1.total_discounted_revenue(@merchant1.id))
+      expect(page).to have_content("Total Discounted Revenue: #{@invoice_1.total_discounted_revenue(@merchant1.id).round(2)}")
     end
 
     it 'displays if there are no applicable discounts' do
-      @discount1 = create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant1)
+      create(:discount, percent_decimal: 0.50, min_quantity: 100, merchant: @merchant1)
 
       visit merchant_invoice_path(@merchant1, @invoice_1)
 
