@@ -51,16 +51,20 @@ class DiscountsController < ApplicationController
   end
 
   def create_discount_params
-    convert_percent_decimal
+    create_percent_conversion
     params.permit(:percent_decimal, :min_quantity)
   end
 
   def update_discount_params
-    convert_percent_decimal
+    update_percent_conversion
     params.require(:discount).permit(:percent_decimal, :min_quantity)
   end
 
-  def convert_percent_decimal
-    params[:discount][:percent_decimal] = (params[:discount][:percent_integer].to_i / 100.to_f) unless params[:percent_integer] == ''
+  def create_percent_conversion
+    params[:percent_decimal] = (params[:percent_integer].to_i / 100.to_f) unless params[:percent_integer] == ''
+  end
+
+  def update_percent_conversion
+    params[:discount][:percent_decimal] = (params[:discount][:percent_integer].to_i / 100.to_f) unless params[:discount][:percent_integer] == ''
   end
 end
